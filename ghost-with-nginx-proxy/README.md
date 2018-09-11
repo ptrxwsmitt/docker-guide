@@ -1,26 +1,29 @@
 Install Ghost 2.0 Blog using Docker on CentOs 7
 ===============================================
 
-###prepare docker folders for volumes and stack yml files
+### prepare docker folders for volumes and stack yml files
 I tend to put my volumes separate from the stack configuration yml:
 ```
 mkdir -p /opt/docker/stacks/
 mkdir -p /opt/docker/volumes/
 ```
 
-install nginx as reverse proxy
+Install nginx as reverse proxy
 ------------------------------
 
-thank you Jason Wilder for providing a nginx based reverse proxy on github: https://github.com/jwilder/nginx-proxy
-further reading and source: https://blog.agchapman.com/ghost-blog-with-nginx-and-docker-1/
+Thank you Jason Wilder for providing a nginx based reverse proxy on github:
+https://github.com/jwilder/nginx-proxy
 
-###prepare folders for volumes and stack yml files
+Further reading and source:
+https://blog.agchapman.com/ghost-blog-with-nginx-and-docker-1/.
+
+### prepare folders for volumes and stack yml files
 ```
 mkdir -p /opt/docker/stacks/
 mkdir -p /opt/docker/volumes/
 ```
 
-####prepare volume folders for nginx
+#### prepare volume folders for nginx
 ```
 mkdir -p /opt/docker/volumes/nginx-proxy/vhost.d ;\
 mkdir -p /opt/docker/volumes/nginx-proxy/html ;\
@@ -44,8 +47,7 @@ sudo cp /opt/docker/volumes/certbot/etc/live/<domain.com>/privkey.pem /opt/docke
 ```
 
 ### create yml file content
-See the file "nginx-proxy.yml" in this folder.
-It contains further comments.
+See the file "nginx-proxy.yml" in this folder. It contains further comments.
 ```
 vi /opt/docker/stacks/nginx-proxy.yml
 ```
@@ -65,38 +67,37 @@ docker exec -it `docker container ls | grep proxy_proxy | cut -c-12` cat /etc/ng
 install ghost with mysql
 ------------------------
 
-###prepare ghost volume folders
+### prepare ghost volume folders
 ```
 mkdir -p /opt/docker/volumes/ghost/var/lib/ghost/content
 mkdir -p /opt/docker/volumes/mysql/var/lib/mysql
 ```
 
 ### create file yml file content
-See the file "ghost.yml" in this folder.
-It contains further comments.
+See the file "ghost.yml" in this folder. It contains further comments.
 ```
 vi /opt/docker/stacks/ghost.yml
 ```
 
-###deploy container
+### deploy container
 ```
 docker stack deploy -c /opt/docker/stacks/ghost.yml ghost
 ```
 
-###show logs and wait till container is up (usually few seconds)
+### show logs and wait till container is up (usually few seconds)
 ```
 docker service logs ghost_ghost
 docker container ls
 ```
 
-###show logs as readable formatted json
+### show logs as readable formatted json
 The lines in the log are valid json objects, but the complete log file is not valid json.
 You may need to split the file by lines before piping it through the python formatter.
 ```
 cat /opt/docker/volumes/ghost/var/lib/ghost/content/logs/https___*_production.log | python -m json.tool | less -S
 ```
 
-###login as su if you want to check sth inside the container
+### login as su if you want to check sth inside the container
 ```
 docker exec -it `docker container ls | grep ghost_ghost | cut -c-12` su
 docker exec -it `docker container ls | grep ghost_mysql | cut -c-12` su
