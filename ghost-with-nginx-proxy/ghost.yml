@@ -1,0 +1,54 @@
+version: '3'
+services:
+ ghost:
+  image: ghost:2
+  depends_on:
+    - mysql
+  environment:
+    - VIRTUAL_HOST=blog.your.domain
+    # VIRTUAL_PORT is the port that is usually published by the container.
+    # This port will be mapped by the jwilder proxy to port 80 or 443 targeting the outside world.
+    # VIRTUAL_PORT config is not required as only one port is exposed by the ghost container, but i usually declare it for better understanding
+    - VIRTUAL_PORT=2368
+    # now the ghost specific config:
+    # all ghost properies set here can be found on https://docs.ghost.org/docs/config
+    # uncommon: instead of hierarchy by "." (database.client) a double underscore "__" is used (database__client)
+    - url=https://blog.your.domain
+    - server__host=0.0.0.0
+    - server__port=2368
+    - database__client=mysql
+    - database__connection__host=mysql
+    - database__connection__port=3306
+    - database__connection__database=db_ghost
+    - database__connection__user=usr_ghost
+    - database__connection__password=yourTopSecretPassword
+  # ports:
+  # usually we would publish the port, but here the jwilder proxy will attach
+  # - '2368:2368'
+  volumes:
+   - /opt/docker/volumes/ghost/var/lib/ghost/content:/var/lib/ghost/content:rw
+  networks:
+    - proxynet
+ mysql:
+  image: mysql:5.7
+  environment:
+   # ports exposed or published by this container should not go to the outside world
+   - NETWORK_ACCESS=internal
+   # now the mysql specific config:
+   - MYSQL_ROOT_PASSWORD=yourEvenMoreTopSecretPassword
+   - MYSQL_DATABASE=db_ghost
+   - MYSQL_USER=usr_ghost
+   - MYSQL_PASSWORD=yourTopSecretPassword
+  ports:
+   - '3306:3306'
+   - '33060:33060'
+  volumes:
+   - /opt/docker/volumes/mysql/var/lib/mysql:/var/lib/mysql:rw
+  networks:
+   - proxynet
+
+# the jwilder proxy stack will create a network called proxy_default of the type overlay (defoault behaviour when deploying a docker stack)
+networks:
+  proxynet:
+    external:
+      name: proxy_default
