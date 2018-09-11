@@ -1,5 +1,5 @@
-Install Ghost 2.0 Blog using Docker on CentOs 7
-===============================================
+Install Ghost 2 Blog using Docker on CentOs 7
+=============================================
 
 ### prepare docker folders for volumes and stack yml files
 I tend to put my volumes separate from the stack configuration yml:
