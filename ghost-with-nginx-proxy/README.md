@@ -33,14 +33,14 @@ mkdir -p /opt/docker/volumes/nginx-proxy/certs
 sudo rm -r /opt/docker/volumes/nginx-proxy/certs
 
 #### request certificates
-make sure to replace email and domain names with the <>-brackets
+Make sure to replace email and domain names with the <>-brackets.
 ```
 docker run -t -i -p 80:80 -p 443:443 -v /opt/docker/volumes/certbot/etc:/etc/letsencrypt -v /opt/docker/volumes/certbot/var:/var/lib/letsencrypt certbot/certbot certonly --standalone --email <your.email@email.com> -d <domain.com> -d <blog.domain.com>
 ```
 
 #### copy certificates to gitlab volumes
-make sure to replace domain names with the <>-brackets
-nginx requires certificate and key to be in the PEM format (as returned from letsencrypt)
+Make sure to replace domain names with the <>-brackets.
+Nginx requires certificate and key to be in the PEM format (as returned from letsencrypt).
 ```
 sudo cp /opt/docker/volumes/certbot/etc/live/<domain.com>/fullchain.pem /opt/docker/volumes/nginx-proxy/certs/<domain.com>.crt ;\
 sudo cp /opt/docker/volumes/certbot/etc/live/<domain.com>/privkey.pem /opt/docker/volumes/nginx-proxy/certs/<domain.com>.key
